@@ -1,6 +1,10 @@
 local mt = {}
 mt.__index = mt
 
+mt.length = function(self)
+	return #self.data
+end
+
 mt.current = function(self)
 	return self.data[self.cursor]
 end
