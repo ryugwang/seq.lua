@@ -9,6 +9,10 @@ mt.current = function(self)
 	return self.data[self.cursor]
 end
 
+mt.peek = function(self, offset)
+	return self.data[self.cursor + offset]
+end
+
 mt.next = function(self, offset)
 	local offset = offset or 1
 	self.cursor = self.cursor + offset
