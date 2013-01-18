@@ -35,7 +35,7 @@ mt.reset = function(self)
 	mt.seek(self, 1)
 end
 
-mt.iter = function(self, func)
+mt.iter = function(self)
 	self:prev()
 	return function()
 		return self:next()
@@ -43,7 +43,7 @@ mt.iter = function(self, func)
 end
 
 mt.append = function(self, t)
-	for i, v in ipairs(t) do
+	for _, v in ipairs(t) do
 		table.insert(self.data, v)
 	end
 	self.count = self.count + #t
