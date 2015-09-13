@@ -5,7 +5,8 @@ mt.length = function(self)
 	return #self.data
 end
 
-mt.current = function(self)
+mt.current = function(self, str)
+	if str then self.data[self.cursor] = str end
 	return self.data[self.cursor]
 end
 
@@ -43,17 +44,22 @@ mt.iter = function(self)
 end
 
 mt.append = function(self, t)
-	for _, v in ipairs(t) do
-		table.insert(self.data, v)
+	if type(t) == 'table' then
+		for _, v in ipairs(t) do
+			table.insert(self.data, v)
+		end
+	else
+		table.insert(self.data, t)
 	end
 	self.count = self.count + #t
+	
 end
 
 local function array_to_sequence(t)
 	local inst = {}
 	setmetatable(inst, mt)
-	inst.data = t
-	inst.count = #t
+	inst.data = t or {}
+	inst.count = #inst.data
 	inst.cursor = 1
 	return inst
 end
@@ -93,6 +99,12 @@ local util = {
 	end
 }
 
+local function new_from_string(str)
+	return array_to_sequence(
+		util.explode(str, "\n")
+	)
+end
+
 local function new_from_file(filename)
 	return array_to_sequence(
 		util.load_lines(filename)
@@ -102,5 +114,6 @@ end
 return {
 	new = array_to_sequence
 ,	new_from_file = new_from_file
+,	new_from_string = new_from_string
 ,	util = util
 }
