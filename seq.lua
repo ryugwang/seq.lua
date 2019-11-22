@@ -55,6 +55,10 @@ mt.append = function(self, t)
 	
 end
 
+mt.concat = function(self, delim)
+	return table.concat(self.data, delim)
+end
+
 local function array_to_sequence(t)
 	local inst = {}
 	setmetatable(inst, mt)
@@ -65,15 +69,15 @@ local function array_to_sequence(t)
 end
 
 local util = {
-	explode = function(src,sep) -- ref. http://lua-users.org/wiki/SplitJoin
+	explode = function(src, sep, no_regex) -- ref. http://lua-users.org/wiki/SplitJoin
 		local result = {}
 		local cur = 0
 		if (#src == 1) then return {src} end
 		while true do
-			local i = string.find(src, sep, cur, true)
+			local i, j = string.find(src, sep, cur, no_regex)
 			if i then
 				table.insert(result, src:sub(cur, i-1))
-				cur = i + 1
+				cur = j + 1
 			else
 				table.insert(result, src:sub(cur))
 				break
@@ -83,10 +87,21 @@ local util = {
 	end
 	, load_lines = function(filename)
 		local t = {}
-		for line in io.lines(filename) do
-			table.insert(t, line)
+		local f, err
+		if filename == '--stdin' then
+			f = io.stdin
+		else
+			f, err = io.open(filename)
 		end
-		return t
+		if f then
+			for line in f:lines() do
+				table.insert(t, line)
+			end
+			f:close()
+			return t
+		else
+			return nil, err
+		end
 	end
 
 	, load_text = function(filename)
