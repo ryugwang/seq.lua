@@ -51,4 +51,4 @@ seq.lua는 배열, 즉 정수 색인 테이블의 순차적 접근을 위한 간
 
 몇 가지 보조 함수들을 담은 테이블.
 
-* `seq.util.explode(`*src*, *sep*, *no_regex = false*`)` -- 주어진 문자열(`src`)를 주어진 구분자(`sep`)를 이용해서 분해한 담은 테이블을 돌려준다. `table.concat()`의 반대. `no_regex`를 `true`로 지정하면 구분자에 대해 패턴 부합이 적용되지 않는다.
+* `seq.util.explode(`*src*, *sep*, *no_regex = false*`)` -- 주어진 문자열(`src`)를 주어진 구분자(`sep`)를 이용해서 분해한 결과를 담은 테이블을 돌려준다. `table.concat()`의 반대. `no_regex`를 `true`로 지정하면 구분자에 대해 패턴 부합이 적용되지 않는다.
