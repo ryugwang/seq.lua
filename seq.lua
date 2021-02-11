@@ -121,9 +121,9 @@ local function new_from_string(str)
 end
 
 local function new_from_file(filename)
-	return array_to_sequence(
-		util.load_lines(filename)
-	)
+	local lines, err = util.load_lines(filename)
+	if err then return nil, err end
+	return array_to_sequence(lines)
 end
 ----------------------------------------
 return {
