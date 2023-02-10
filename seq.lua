@@ -15,9 +15,9 @@ mt.peek = function(self, offset)
 end
 
 mt.next = function(self, offset)
-	local offset = offset or 1
+	offset = offset or 1
 	self.cursor = self.cursor + offset
-	return self.data[self.cursor]
+	return self.data[self.cursor], self.cursor
 end
 
 mt.prev = function(self, offset)
@@ -36,6 +36,24 @@ mt.reset = function(self)
 	mt.seek(self, 1)
 end
 
+mt.skip_to = function(self, pred)
+	local pred_ = pred
+	if type(pred) == 'string' then
+		pred_ = function(item)
+			return item:find(pred)
+		end
+	end
+
+	for item in self:iter() do
+		if pred_(item) then break end
+	end
+end
+
+mt.skip_over = function(self, pred)
+	self:skip_to(pred)
+	self:next()
+end
+
 mt.iter = function(self)
 	self:prev()
 	return function()
@@ -52,12 +70,13 @@ mt.append = function(self, t)
 		table.insert(self.data, t)
 	end
 	self.count = self.count + #t
-	
+
 end
 
 mt.concat = function(self, delim)
 	return table.concat(self.data, delim)
 end
+
 
 local function array_to_sequence(t)
 	local inst = {}
@@ -88,7 +107,7 @@ local util = {
 	, load_lines = function(filename)
 		local t = {}
 		local f, err
-		if filename == '--stdin' then
+		if filename == '--stdin' or filename == '-' then
 			f = io.stdin
 		else
 			f, err = io.open(filename)
@@ -125,9 +144,18 @@ local function new_from_file(filename)
 	if err then return nil, err end
 	return array_to_sequence(lines)
 end
+
+local function new(t)
+	if type(t) == 'string' then
+		return new_from_string(t)
+	end
+	t = t or {}
+	return array_to_sequence(t)
+end
+
 ----------------------------------------
 return {
-	new = array_to_sequence
+	new = new
 ,	new_from_file = new_from_file
 ,	new_from_string = new_from_string
 ,	util = util
